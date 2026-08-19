@@ -477,7 +477,7 @@ void App_TestingMode(void)
 			eMain_Task = Task_ReadyMode;	//进入下一任务
 			eReadyTask_Sta = Ready_Timeout;	//下一任务状态初始化
 			g_15s_Count = CountDown_15s;	//记忆显示15秒倒计时
-			uKeyRelease.bits.TKeyRelease = 1;	//释放抬起信号防止重复进入测试
+			uKeyRelease.bits.TKeyRelease = 0;	//清除本次测量键释放标志，等待下一次实际释放
 			break;
 
 		default:

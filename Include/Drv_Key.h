@@ -105,6 +105,7 @@ extern uKey3 uKeyRelease;
 extern uKey4 uKeyContinue;
 
 extern strKey sMemKey, sTestKey, sSetKey, sModeKey;
+extern uint8 SKeyHoldFlag;
 
 void TKeyProcess(void);
 void App_ReadymodeOKeyProcess(void);

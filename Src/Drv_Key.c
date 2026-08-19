@@ -64,7 +64,6 @@ void TKeyProcess(void)
         eMain_Task = Task_Testingmode;
 		//g_50ms_Count = DispTime_Init;	//循环显示时间、温度、ntc实时时间等初始化值
 		Disp_Unit();	//显示单位
-		
 	}
 	//长按3s关机，进入睡眠模式
 	if(uKeyPress.bits.TKeyPress)
@@ -93,10 +92,10 @@ void TKeyProcess(void)
 			uKeyHold.bits.TKeyHold = 0;
 		}
 	}
-	//温度不稳定时或超时状态下，按下测试键5秒等待，5秒等待未完成测试键再次按下则ER1重新开始测试键5秒等待
+	//温度不稳定时或超时状态下，测试键释放后进入Er1的5秒等待；等待未完成时再次释放测试键则重新开始等待
 	if(eTestmode_num != Foreheadmode && eTestmode_num != Objectmode)
 	{
-		if(uKeyPress.bits.TKeyPress && !uKeyRelease.bits.TKeyRelease && (eReadyTask_Sta == Ready_DisEr1 || eReadyTask_Sta == Ready_Timeout))
+		if(uKeyRelease.bits.TKeyRelease && (eReadyTask_Sta == Ready_DisEr1 || eReadyTask_Sta == Ready_Timeout))
 		{
 			#if Have_Voice_Func  //关闭语音
 				PlayStatueParam(2 , 0 , 0);
@@ -106,7 +105,7 @@ void TKeyProcess(void)
 			
 			Adc_Channel_Init(TPTONTC);			//切换到ntc通道
 			eReadyTask_Sta = Ready_DisEr1;
-			uKeyPress.bits.TKeyPress = 0;
+			uKeyRelease.bits.TKeyRelease = 0;
 		}
 	}
 	if(!uKeyPress.bits.TKeyPress)
@@ -121,7 +120,7 @@ void MemKeyProcess(void)
 	static bit S_MemKeyAgeSwitched = 0;	//年龄切换已触发标志，防止长按重复触发
 
 	//按下记忆键切换年龄分段（按下触发，长按只触发一次）
-	if( uKeyPress.bits.MemKeyPress && !S_MemKeyAgeSwitched && eMain_Task == Task_ReadyMode && eReadyTask_Sta == Ready_ReadyOk && eTestmode_num!=Objectmode && eTestmode_num!=Insptectmode )
+	if( uKeyPress.bits.MemKeyPress && !S_MemKeyAgeSwitched && eMain_Task == Task_ReadyMode && (eReadyTask_Sta == Ready_ReadyOk || eReadyTask_Sta == Ready_Timeout) && eTestmode_num!=Objectmode && eTestmode_num!=Insptectmode )
 	{
 		S_MemKeyAgeSwitched = 1;
 		uErrFlag.bits.Er2 = 0;
@@ -164,7 +163,10 @@ void MemKeyProcess(void)
 		}
 		g_15s_Count = CountDown_15s;
 		Auto_TurnOff_Time_Sel();
-		eReadyTask_Sta = Ready_ReadyOk;
+		if( eReadyTask_Sta != Ready_Timeout )
+		{
+			eReadyTask_Sta = Ready_ReadyOk;
+		}
 	}
 
 	//按键释放后复位标志，允许下次按下再次触发

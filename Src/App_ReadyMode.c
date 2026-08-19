@@ -108,12 +108,12 @@ void App_ReadyMode(void)
 			uErrFlag.g_ErrFlag = 0;
 			F_Mem_FirstEnter = 0; //清除记忆
             Auto_TurnOff_Time_Sel();//自动关机
-			if(eTestmode_num != Objectmode && eTestmode_num != Foreheadmode && eTestmode_num != Insptectmode)
-			{
-				LED_CloseAll();
-				LED_Green_En();		//绿色背光
-				g_15s_Count = CountDown_15s;	//记忆显示15秒倒计时
-			}
+			// if(eTestmode_num != Objectmode && eTestmode_num != Foreheadmode && eTestmode_num != Insptectmode)
+			// {
+			// 	LED_CloseAll();
+			// 	LED_Green_En();		//绿色背光
+			// 	g_15s_Count = CountDown_15s;	//记忆显示15秒倒计时
+			// }
 
 			// 播放就绪提示
 			if(uSetFlag.bits.Ready_First )

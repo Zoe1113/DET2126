@@ -173,7 +173,7 @@ void Disp_Temp(bit Point, bit High, bit Unit, int16 Temp)
 		lcd2 = DispTable[ R_LCD5 ] >> 8;
 	    lcd1 = DispTable[ R_LCD5 ];	
 		//×î¸ßÎ»ÖÃ1
-		if( R_LCD2==1 )
+		if( R_LCD2>=4 )
 		{
 			lcd_one_en();
 		}	
@@ -710,7 +710,7 @@ uint8 Disp_FourSecLoop_Step(void)
 				lcd_obj_clr();
 				lcd6 = 0x04;
 				lcd5 = 0x00;
-			if(eTestmode_num == Insptectmode)
+			if(eTestmode_num == Insptectmode || eTestmode_num == Blackbodymode)
 			{
 				lcd_obj_en();
 			}
@@ -731,7 +731,7 @@ uint8 Disp_FourSecLoop_Step(void)
 			{
 				lcd4 = 0x04;
 				lcd3 = 0x00;
-			if(eTestmode_num == Insptectmode)
+			if(eTestmode_num == Insptectmode || eTestmode_num == Blackbodymode)
 			{
 				lcd_obj_clr();
 			}

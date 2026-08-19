@@ -27,6 +27,12 @@ void App_Sleep(void)
 			{
 				eTestmode_num = Earmode;
 			}
+			if( eTestmode_num == Foreheadmode || eTestmode_num == Objectmode )
+			{
+				eTestmode_num = Earmode;
+				uStaFlag.bits.ProbeCover = 0;
+			}
+			g_AgeGroup = AgeGroup_36_Plus;
 			uErrFlag.g_ErrFlag = 0;
 
 			Time_CountDown_5s_timeout(RESET);
@@ -67,11 +73,11 @@ void App_Sleep(void)
 					Delay10ms(100);
 					Disp_Version(Soft_External_Version);
 					Delay10ms(100);
-					#if Secondary_voltage
-						LVD_Display();
-					#else
-						Disp_FullBat();
-					#endif
+					// #if Secondary_voltage
+					// 	LVD_Display();
+					// #else
+					// 	Disp_FullBat();
+					// #endif
 					Adc_Channel_Init(TPTONTC);
 					Er2_Display_Sound(RESET);
 					Er3_Display_Sound(RESET);
@@ -85,7 +91,7 @@ void App_Sleep(void)
 			else 
 			{      
 				eSleepTask_Sta = Sleep_true;
-				uStaFlag.g_StatusFlag &= 0x02;
+				uStaFlag.g_StatusFlag &= 0x22;
 			}
 			break;
 
@@ -168,7 +174,33 @@ void App_Sleep(void)
 			l_buf ++;
 			if( l_buf > 8 )
 			{
-				if( uKeyPress.bits.SKeyPress && uSetFlag.bits.Unit_Change == Unit_Change_En)
+				if( uKeyPress.bits.MemKeyPress && !uStaFlag.bits.LowBat )
+				{
+					if( uKeyPress.bits.SKeyPress )
+					{
+						SKeyHoldFlag = 1;
+					}
+					Adc_Channel_Init(TPTONTC);
+					uErrFlag.bits.Er2 = 0;
+					eReadyTask_Sta = Ready_ReadyOk;
+					eMain_Task = Task_Memorymode;
+					Auto_TurnOff_Time_Sel();
+					#if Secondary_voltage
+						LVD_Display();
+					#else
+						Disp_FullBat();
+					#endif
+				}
+				else if( uKeyPress.bits.MemKeyPress && uStaFlag.bits.LowBat )
+				{
+					Clr_Disp();
+					Disp_LowBat();
+					Auto_TurnOff_Time_Sel();
+					eMain_Task = Task_InitMode;
+					eInitTask_Sta = Init_Err;
+					eSleepTask_Sta = Sleep_false;
+				}
+				else if( uKeyPress.bits.SKeyPress && uSetFlag.bits.Unit_Change == Unit_Change_En)
 				{
 					if( uKeyHold.bits.SKeyHold  && !uStaFlag.bits.LowBat)
 					{
@@ -202,17 +234,6 @@ void App_Sleep(void)
 						eInitTask_Sta = Init_Err;
 						eSleepTask_Sta = Sleep_false;
 					}
-				}
-				else if( uKeyPress.bits.MemKeyPress && !uStaFlag.bits.LowBat )
-				{
-					eReadyTask_Sta = Ready_ReadyOk;
-					eMain_Task = Task_Memorymode;
-					Auto_TurnOff_Time_Sel();
-					#if Secondary_voltage
-						LVD_Display();
-					#else
-						Disp_FullBat();
-					#endif
 				}
 				else if( uKeyPress.bits.TKeyPress )
 				{
