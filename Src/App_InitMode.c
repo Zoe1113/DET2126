@@ -167,7 +167,10 @@ void App_InitMode(void)
 		//初始化结束，将当前状态设为初始状态
 		case Init_End:
 			Clr_Disp();
-			Disp_FullBat();
+			if( eTestmode_num != Insptectmode )
+			{
+				Disp_FullBat();
+			}
 			HalKey_KeyClr();	//清除所有按键信息
 			eInitTask_Sta = Init_Set;		//下次进入将当前状态设置为初始状态
 			eMain_Task = Task_ReadyMode;	//进入第一个任务

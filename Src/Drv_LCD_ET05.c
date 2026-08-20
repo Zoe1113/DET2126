@@ -617,8 +617,11 @@ void Disp_Lo(void)
 
     lcd2 = 0x06;
     lcd1 = 0x03;
-    lcd_badface_clr();      //ÇåÐ¦Á³
-    lcd_smileface_en();    //Çå¿ÞÁ³
+	if(eTestmode_num !=Objectmode)
+	{
+		lcd_badface_clr();      //ÇåÐ¦Á³
+		lcd_smileface_en();    //Çå¿ÞÁ³
+	}
 }
 
 /**************************************************************************
@@ -637,8 +640,11 @@ void Disp_Hi(void)
 
     lcd2 = 0x02;
     lcd1 = 0x00;
-    lcd_badface_en();      //ÇåÐ¦Á³
-    lcd_smileface_clr();    //Çå¿ÞÁ³
+	if(eTestmode_num !=Objectmode)
+	{
+		lcd_badface_en();      //ÇåÐ¦Á³
+		lcd_smileface_clr();    //Çå¿ÞÁ³
+	}
 }
 
 /**************************************************************************
@@ -833,7 +839,7 @@ void Disp_ErrMsg(void)
 	{
 		case 2:
 			lcd_badface_clr();
-			lcd_smileface_en();
+			lcd_smileface_clr();
 			Disp_ErN(2);
 			break;
 		case 4:

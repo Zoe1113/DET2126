@@ -30,4 +30,17 @@
 13.未找到原因，未再次出现
 15.测量结果已根据年龄分段点亮对应背光，但进入Ready_WaitReady时再次执行LED_CloseAll和LED_Green_En，导致结果背光被强制改成绿色；解决方法：注释掉Ready_WaitReady中强制切换绿色背光的代码，保留测量结果对应背光直到自然熄灭或下一次刷新
 16.5秒滚屏动画中物温符号只对Insptectmode执行开关，未包含Blackbodymode，导致黑体模式滚屏期间物温符号不闪烁；解决方法：将动画中lcd_obj_en和lcd_obj_clr的条件改为Insptectmode或Blackbodymode
-17.电压在2.6-2.7V时应为midBat闪烁，但进入真关机前uStaFlag.g_StatusFlag &= 0x02只保留LowBat并清除midBat，记忆键唤醒后电池按正常电量常亮显示；解决方法：休眠前改为uStaFlag.g_StatusFlag &= 0x22，同时保留LowBat和midBat标志
+
+
+后续发现的问题：
+1.电压在2.6-2.7V之间时，开机再关机后，进入记忆，电池不闪
+2.物温测量结果显示Hi和Lo时，复刻机显示哭脸笑脸
+3.额温或物温在测量过程中松下检测杆经常出现er2
+4.进入生产模式电池显示还是不一致
+5.er2错误显示不应有笑脸
+
+1.电压在2.6-2.7V时应为midBat闪烁，但进入真关机前uStaFlag.g_StatusFlag &= 0x02只保留LowBat并清除midBat，记忆键唤醒后电池按正常电量常亮显示；解决方法：休眠前改为uStaFlag.g_StatusFlag &= 0x22，同时保留LowBat和midBat标志
+2.物温Hi/Lo显示复用Disp_Hi和Disp_Lo，原函数内部会分别点亮哭脸和笑脸，导致物温异常结果显示表情；解决方法：在Disp_Hi和Disp_Lo中增加eTestmode_num != Objectmode判断，物温模式只显示Hi/Lo字符，不点亮哭笑脸
+3.额温或物温测量过程中松下检测杆会从Foreheadmode/Objectmode切回Earmode，若只修改模式状态而未立即切换ADC通道，在进入Ready_WaitReady统一切TP通道前存在短暂采样窗口，可能沿用旧通道或NTC过渡数据并误判Er2；解决方法：松检测杆切回耳温时立即调用Adc_Channel_Init(NTCTOTP)，提前切到耳温TP通道
+4.进入生产模式时Init_End中无条件调用Disp_FullBat，使电池状态框与其它显示同步出现；解决方法：Init_End中判断eTestmode_num != Insptectmode时才显示满电框，生产模式跳过该提前显示
+5.Er2显示走Disp_ErrMsg的case 2，原逻辑会清哭脸并点亮笑脸，导致Er2错误显示笑脸；解决方法：case 2中将lcd_smileface_en改为lcd_smileface_clr，Er2只显示错误码不显示笑脸

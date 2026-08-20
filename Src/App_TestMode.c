@@ -204,7 +204,6 @@ void App_TestingMode(void)
 		#endif
 
 			Tp_Caculate();
-
 		#if Func_debug
 			Uart_Transmit(0x94, g_TpCount);
 		#endif
@@ -215,8 +214,8 @@ void App_TestingMode(void)
 			Uart_Transmit(0x95, g_TpCount);
 		#endif
 			TpTable_Find();
-			//g_NtcStep=3400;
-			//g_TpStep=10100;
+			// g_NtcStep=2500;
+			// g_TpStep=3700;
 		#if Func_debug
 			Uart_Transmit(0x96, g_TpStep);
 		#endif

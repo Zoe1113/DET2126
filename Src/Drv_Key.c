@@ -316,6 +316,7 @@ void App_PCKeyProcess(void)
 		Disp_FourSecLoop_Init();
 		uSetFlag.bits.Ready_First = 0;
 		eTestmode_num=Earmode;
+		Adc_Channel_Init(NTCTOTP);	//切回耳温后立即切到TP通道，避免Ready流程前短暂采样窗口误判Er2
 	  	uStaFlag.bits.ProbeCover = 0;
 		eReadyTask_Sta = Ready_Refresh;
 		eTestTask_Sta=Test_Init;
