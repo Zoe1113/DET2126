@@ -61,6 +61,7 @@ void TKeyProcess(void)
 		Er3_Display_Sound(RESET);
 
 		Time_CountDown_5s_timeout(RESET);
+		Auto_TurnOff_Time_Sel();	//测量开始时重置自动关机计时
         eMain_Task = Task_Testingmode;
 		//g_50ms_Count = DispTime_Init;	//循环显示时间、温度、ntc实时时间等初始化值
 		Disp_Unit();	//显示单位
@@ -281,6 +282,7 @@ void SkeyProcess(void)
 
 				#endif
 			}
+			Auto_TurnOff_Time_Sel();	//自动关机时间清零
 		}
 	}
 	if(!uKeyPress.bits.SKeyPress)
